@@ -10,4 +10,4 @@ samples = ['15-0025864', '15-0025869']
 vcf= VCF("/Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz", samples=samples)
 
 for v in vcf:
-        print(v.call_rate,v.var_type, v.REF, v.ALT)
+        print(v.genotype,v.var_type, v.REF, v.ALT)
