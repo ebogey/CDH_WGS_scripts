@@ -18,45 +18,67 @@ def get_all_vcfsamples(vcfile):
 
     samples = v.samples() # Cyvcf2 attribute pulls out sample names and creates a list
 
+    return samples # Return the list to check it worked
+
+
+
+def write_vcfsamples(samples, vcfile):
+
     outfile = open((vcfile + "_" + "samples.txt"), "w") # Print and write the list as a text file to be used for other stuff
-    outfile.write(samples)
-    return samples
 
 
-def get_samplelist(samplelist):
+    sampdump = json.dumps(samples) # Converts the list made by v.samples() to a writable string
+
+    outfile.write(sampdump) # Write list created to fiLe
+
+    outfile.close()
+
+    return samples # Return the list to check it worked
+
+
+def get_samplst(samplelist):
     ###This will allow you to create a narrowed list of samples that can then be passed to cyvcf2 functions###
 
     samplst = []
 
-    sampquery = input("What sample(s) do you want? ")
+    sampquery = raw_input("What sample(s) do you want? ")
 
-    modifquery = input("Please specify 'Exact', 'Starts with', 'Ends with' or 'not' to pull samples ")
+    modifquery = raw_input("Please specify 'Exact', 'Starts with', 'Ends with' or 'not' to pull samples ")
 
     if modifquery == 'Exact':
         for i in samplelist:
             if i == sampquery:
-                samplst.append()
+                samplst.append(i)
             else: continue
-    if modifquery == 'Starts with':
+    elif modifquery == 'Starts with':
         for i  in samplelist:
             i = str(i)
             if i.startswith(sampquery) == True:
-                samplst.append()
+                samplst.append(i)
             else: continue
-    if modifquery == 'Ends with':
+    elif modifquery == 'Ends with':
         for i in samplist:
             i = str(i)
             if i.endswith(sampquery) == True:
-                samplst.append()
+                samplst.append(i)
             else: continue
-    if modifquery == 'not':
+    elif modifquery == 'not':
         for i in samplelist:
             if i != sampquery:
-                samplst.append()
+                samplst.append(i)
     else: print "Incorrect modifier given."
 
+
+def samplelist_writer(samplst):
     if len(samplst) == 0:
         print "Looks like that sample is not in the list given."
     else:
         outfile = open((sampquery + "_" + modifquery + "_" + "list.txt"), "w")
+
+        lstdump = json.dumps(samplst) # Converts the list made by v.samples() to a writable string
+
+        outfile.write(samplst) # Write list created to fiLe
+
+        outfile.close()
+
         return samplst
