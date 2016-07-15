@@ -10,15 +10,14 @@ import json
 
 def get_all_vcfsamples(vcfile):
     ###This will give a full list of the samples in the given vcf file###
-    VCF_PATH = os.path.join("~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/", vcfile)
 
     #vcfile = input("Path and name of vcf file to get samples from. Must be typed correctly. /n") # Makes you type in the name of the vcf file you are grabbing sample names from, should change at some point to make more robust
 
-    v = VCF(VCF_PATH) # Read in as vcf to cyvcf2
+    v = VCF(vcfile) # Read in as vcf to cyvcf2
 
-    samples = v.samples() # Cyvcf2 attribute pulls out sample names and creates a list
+    sampl = v.samples # Cyvcf2 attribute pulls out sample names and creates a list
 
-    return samples # Return the list to check it worked
+    return sampl # Return the list to check it worked
 
 
 
@@ -36,14 +35,14 @@ def write_vcfsamples(samples, vcfile):
     return samples # Return the list to check it worked
 
 
-def get_samplst(samplelist):
+def get_samplst(samplelist, sq, mq):
     ###This will allow you to create a narrowed list of samples that can then be passed to cyvcf2 functions###
 
     samplst = []
 
-    sampquery = raw_input("What sample(s) do you want? ")
+    sampquery = str(sq)
 
-    modifquery = raw_input("Please specify 'Exact', 'Starts with', 'Ends with' or 'not' to pull samples ")
+    modifquery = str(mq)
 
     if modifquery == 'Exact':
         for i in samplelist:
