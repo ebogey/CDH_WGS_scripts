@@ -1,0 +1,326 @@
+    1  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    2  brew install wget
+    3  ssh u0695383@kingspeak20.chpc.utah.edu
+    4  cd Documents/
+    5  ls
+    6  rm 15_0025874.bam
+    7  exit
+    8  ssh u0695383@kingspeak20.chpc.utah.edu
+    9  ls
+   10  cd Documents/
+   11  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   12  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   13  wget
+   14  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   15  rm 15_0025874.bam 
+   16  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   17  ssh u0695383@kingspeak20.chpc.utah.edu
+   18  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.g
+   19  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.g
+   20  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz
+   21  git
+   22  git clone https://github.com/arq5x/cyvcf.git
+   23  brew install anaconda
+   24  python
+   25  ls
+   26  cd cyvcf/
+   27  python setup.py build python setup.py install
+   28  python setup.py build
+   29  python setup.py install
+   30  python setup.py install --user
+   31  python setup.py build --user
+   32  ls
+   33  python
+   34  pypi cyvcf
+   35  brew install pypi
+   36  pip
+   37  brew install pip
+   38  cd ..
+   39  python get-pip.py
+   40  whereis python
+   41  cd cyvcf/
+   42  sudo /usr/bin/python2.7 setup.py install
+   43  cd ..
+   44  sudo /usr/bin/python2.7 python get-pip.py 
+   45  pip
+   46  mv get-pip.py /usr/bin/
+   47  conda
+   48  brew install pip
+   49  brew install python
+   50  brew install python
+   51  pip
+   52  pip install cyvcf
+   53  cyvcf
+   54  python
+   55  python
+   56  ls
+   57  rm cyvcf/
+   58  rm -R cyvcf/
+   59  rm get-pip.py 
+   60  ls
+   61  ls /usr/bin/python2.7
+   62  ls /usr/bin/python2.7/
+   63  ls /usr/bin/python/
+   64  pip install cyvcf
+   65  python
+   66  pip install cyvcf2
+   67  pip install numpy
+   68  pip install cyvcf2
+   69  pip install cython
+   70  pip install cyvcf2
+   71  python
+   72  ls
+   73  whereis cyvcf2
+   74  whereis python
+   75  whereis cyvcf2/
+   76  ls /usr/bin/python
+   77  python cyvcf2
+   78  python -m cyvcf2
+   79  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   80  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/f57765e4-58cc-46a3-8c4c-876f7e0b29cdu0695383/15_0025874.bam
+   81  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/ae69b512-9c33-425b-80db-9c94d2cbc0ccu0695383/15_0025874.bam
+   82  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/ae69b512-9c33-425b-80db-9c94d2cbc0ccu0695383/15_0025874.bam
+   83  rm 15_0025874.bam.1 
+   84  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/ae69b512-9c33-425b-80db-9c94d2cbc0ccu0695383/15_0025874.bam
+   85  ls
+   86  ls
+   87  pwd
+   88  wget https://ugp.chpc.utah.edu/gnomex/URLLinks/ae69b512-9c33-425b-80db-9c94d2cbc0ccu0695383/15_0025874.bam
+   89  pwd
+   90  ls
+   91  mv 15_0025874.bam Documents/
+   92  python 
+   93  pip install cyvcf2
+   94  cyvcf2
+   95  python cyvcf2
+   96  pip uninstall cyvcf2
+   97  pip install cyvcf2
+   98  python
+   99  ls
+  100  cd Documents/
+  101  ls
+  102  cd CDH_WGS/Data/VCFs/GATK_UGP/
+  103  ls
+  104  python 
+  105  emacs
+  106  emacs cython_test.py
+  107  python cython_test.py 
+  108  emacs cython_test.py
+  109  emacs cyvcf2_sampletest.py
+  110  python cyvcf2_sampletest.py
+  111  emacs cyvcf2_sampletest.py
+  112  python cyvcf2_sampletest.py
+  113  python cyvcf2_sampletest.py >test.txt
+  114  emacs cyvcf2_sampletest.py
+  115  python cyvcf2_sampletest.py >test.txt
+  116  less test.txt 
+  117  ls -hl
+  118  rm test.txt 
+  119  emacs cyvcf2_sampletest.py
+  120  python cyvcf2_sampletest.py >test.txt
+  121  ls
+  122  cd ..
+  123  cd ,,
+  124  cd ..
+  125  cd ..
+  126  git clone https://github.com/ebogey/CDH_WGS_scripts.git
+  127  cd CDH_WGS_scripts/
+  128  git status
+  129  ls
+  130  pwd
+  131  mv /Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/cyvcf2_sampletest.py .
+  132  ls
+  133  git add cyvcf2_sampletest.py 
+  134  git commit -m "first commit, sampletest file"
+  135  git push
+  136  less /Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/test.txt 
+  137  ls -hls /Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/
+  138  ls
+  139  cd ~/Documents/CDH_WGS/Data/VCFs/
+  140  ls
+  141  cd GATK_UGP/
+  142  ks
+  143  ls
+  144  less FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz 
+  145  ipy
+  146  ipython
+  147  brew install anaconda
+  148  python
+  149  cd /Users/kardonlab/Downloads/
+  150  bash Anaconda2-4.1.1-MacOSX-x86_64.sh 
+  151  exit
+  152  ipython
+  153  cd Documents/CDH_WGS/CDH_WGS_scripts/
+  154  ls
+  155  jupyter notebook cyvcf2_sampletest.py 
+  156  ipython notebook cyvcf2_sampletest.py 
+  157  ipy cyvcf2_sampletest.py 
+  158  ipython notebook cyvcf2_sampletest.py 
+  159  ipython notebook
+  160  ls
+  161  emacs cyvcf2_sampletest.py 
+  162  python cyvcf2_sampletest.py >test2.txt
+  163  python 
+  164  history
+  165  pip install cyvcf2
+  166  python cyvcf2_sampletest.py >test2.txt
+  167  emacs cyvcf2_sampletest.py 
+  168  python cyvcf2_sampletest.py >test2.txt
+  169  less test2.txt 
+  170  rm test2.txt 
+  171  python cyvcf2_sampletest.py >test2.txt
+  172  python cyvcf2_sampletest.py >test2.txt
+  173  cd ..
+  174  cd ..
+  175  ls
+  176  cd CDH_WGS/Data/
+  177  ls
+  178  cd VCFs/
+  179  ls
+  180  cd GATK_UGP/
+  181  la
+  182  ls
+  183  less test.txt 
+  184  cd ..
+  185  ls
+  186  cd ..
+  187  ls
+  188  cd ..
+  189  ls
+  190  cd CDH_WGS_scripts/
+  191  ls
+  192  ipy Untitled.ipynb 
+  193  ipython Untitled.ipynb 
+  194  ipython notebook Untitled.ipynb 
+  195  ipython notebook Untitled.ipynb 
+  196  git status
+  197  git add .
+  198  git commit -m "New changes in test script"
+  199  git push
+  200  python cyvcf2_sampletest.py >test2.txt
+  201  ls -hl
+  202  less test2.txt 
+  203  ipython notebook Untitled.ipynb 
+  204  python cyvcf2_sampletest.py >test_2samples.txt
+  205  ls -hl
+  206  emacs cyvcf2_sampletest.py
+  207  python cyvcf2_sampletest.py >test_1samples.txt
+  208  ls -hl
+  209  less cyvcf2_sampletest.py
+  210  head test_1samples.txt 
+  211  head test_2samples.txt 
+  212  rm test* 
+  213  ls
+  214  ls -hl
+  215  emacs cyvcf2_sampletest.py
+  216  python cyvcf2_sampletest.py >test_1samples.txt
+  217  python cyvcf2_sampletest.py >test_moreinfo.txt
+  218  emacs cyvcf2_sampletest.py
+  219  python cyvcf2_sampletest.py >test_moreinfo.txt
+  220  less test_moreinfo.txt 
+  221  ls
+  222  tree
+  223  cd ..
+  224  ls
+  225  git clone https://github.com/tomsasani/denovo_scripts.git
+  226  ls
+  227  cd denovo_scripts/
+  228  ls
+  229  cd de_novo/
+  230  ls
+  231  less info.py
+  232  cd ..
+  233  ls
+  234  cd ..
+  235  ls
+  236  cd CDH_WGS_scripts/
+  237  ls
+  238  cd ..
+  239  ls
+  240  cd ..
+  241  ls
+  242  cd CDH_WGS/
+  243  la
+  244  ls
+  245  cd Data/
+  246  ls
+  247  cd VCFs/GATK_UGP/
+  248  python
+  249  emacs get_samplelist.py
+  250  python get_samplelist.py 
+  251  emacs get_samplelist.py
+  252  python get_samplelist.py 
+  253  emacs get_samplelist.py
+  254  python get_samplelist.py 
+  255  emacs get_samplelist.py
+  256  ls
+  257  pwd
+  258  python
+  259  less get_samplelist.py
+  260  python
+  261  emacs get_samplelist.py
+  262  git add .
+  263  mv get_samplelist.py ~/Documents/CDH_WGS/CDH_WGS_scripts/
+  264  git add ~/Documents/CDH_WGS/CDH_WGS_scripts/
+  265  cd ~/Documents/CDH_WGS/CDH_WGS_scripts/
+  266  git add .
+  267  git commit -m "add sampleget script"
+  268  git push
+  269  ipython notebook
+  270  ls
+  271  whereis FQF*
+  272  cd ..
+  273  ls
+  274  cd Data/VCFs/GATK_UGP/
+  275  pwd
+  276  cd ~/Documents/CDH_WGS/CDH_WGS_scripts/
+  277  ipython notebook
+  278  git add .
+  279  git status
+  280  less FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gzsamples.txt 
+  281  cd ..
+  282  ls
+  283  cd denovo_scripts/de_novo/
+  284  ks
+  285  ls
+  286  less de_novo.py 
+  287  less de_novo.py 
+  288  cd ~/Documents/CDH_WGS/CDH_WGS_scripts/
+  289  ls
+  290  ipython notebook
+  291  git add .
+  292  git commit -m "Added functions to get_samplelist.py, still need to fix output."
+  293  git push
+  294  ipython notebook
+  295  exit
+  296  cd Documents/CDH_WGS/CDH_WGS_scripts/
+  297  ls
+  298  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  299  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  300  ls /Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/
+  301  mv /Users/kardonlab/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz .
+  302  ls
+  303  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  304  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  305  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  306  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  307  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  308  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  309  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  310  git add .
+  311  mv FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/
+  312  ls
+  313  git add get_sample_info.py get_samplelist.py
+  314  git commit -m "Sample caller working"
+  315  git push
+  316  less cyvcf2_sampletest.py
+  317  python get_sample_info.py -v FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  318  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  319  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  320  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  321  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  322  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  323  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025864 -sp 'Exact'
+  324  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  325  python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -sp 'Starts with'
+  326  history > history_log_7-16-16.txt

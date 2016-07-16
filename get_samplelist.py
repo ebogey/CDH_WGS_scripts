@@ -41,8 +41,10 @@ def get_samplst(samplelist, sq, mq):
     samplst = []
 
     sampquery = str(sq)
+    print sampquery, "-s option used."
 
     modifquery = str(mq)
+    print modifquery, "-sp option used."
 
     if modifquery == 'Exact':
         for i in samplelist:
@@ -56,7 +58,7 @@ def get_samplst(samplelist, sq, mq):
                 samplst.append(i)
             else: continue
     elif modifquery == 'Ends with':
-        for i in samplist:
+        for i in samplelist:
             i = str(i)
             if i.endswith(sampquery) == True:
                 samplst.append(i)
@@ -66,6 +68,7 @@ def get_samplst(samplelist, sq, mq):
             if i != sampquery:
                 samplst.append(i)
     else: print "Incorrect modifier given."
+    return samplst
 
 
 def samplelist_writer(samplst):
