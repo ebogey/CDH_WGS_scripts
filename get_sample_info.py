@@ -13,6 +13,7 @@ p.add_argument("-t","--tissue", help= "OPTIONAL: Enter tissue type, pull variant
 p.add_argument("-f","--family", help= "OPTIONAL: Enter a 3 digit family ID, pull variants found in these samples.", required = False)
 p.add_argument("-o","--out", help = "OPTIONAL: Name the output VCF.", required = False)
 
+#Setting inputs as va
 args = p.parse_args()
 vcfarg = args.vcf
 out = args.out
@@ -20,6 +21,7 @@ samp = args.samples
 spec = args.specifier
 tissue = args.tissue
 family = args.family
+print samp, spec, tissue, family
 
 # csv iterator block adapted from stack overlow forum, http://stackoverflow.com/questions/6740918/creating-a-dictionary-from-a-csv-file, visited 7-14-16
 
@@ -69,16 +71,19 @@ else:
 
 vcfinfo = []
 
+print finalsamplelist
+
 for v in bigvcf:
-    vcfinfo = v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int)
+     print "chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int)
 
-outfile = open((out), "w")
 
-#vcfdump = json.dumps(vcfinfo) # Converts the list made by v.samples() to a writable string
+##outfile = open((out), "w")
 
-outfile.write(vcfinfo) # Write list created to fiLe
+##vcfdump = json.dumps(vcfinfo) # Converts the list made by v.samples() to a writable string
 
-outfile.close()
+##outfile.write(vcfdump) # Write list created to fiLe
+
+##outfile.close()
 
 
 #for v in bigvcf:
