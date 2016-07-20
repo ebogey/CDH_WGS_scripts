@@ -41,10 +41,10 @@ def get_samplst(samplelist, sq, mq):
     samplst = []
 
     sampquery = str(sq)
-    print sampquery, "-s option used."
+    #print sampquery, "-s option used."
 
     modifquery = str(mq)
-    print modifquery, "-sp option used."
+    #print modifquery, "-sp option used."
 
     if modifquery == 'Exact':
         for i in samplelist:

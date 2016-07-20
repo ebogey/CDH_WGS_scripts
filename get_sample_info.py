@@ -12,6 +12,7 @@ p.add_argument("-sp","--specifier", help= "REQUIRED: Use 'Exact', 'Starts with',
 p.add_argument("-t","--tissue", help= "OPTIONAL: Enter tissue type, pull variants found in these samples. Options: blood-maternal, blood-paternal, blood-proband, Skin, Diaphragm.", required = False)
 p.add_argument("-f","--family", help= "OPTIONAL: Enter a 3 digit family ID, pull variants found in these samples.", required = False)
 p.add_argument("-o","--out", help = "OPTIONAL: Name the output VCF.", required = False)
+p.add_argument("-to","--outtype", help = "OPTIONAL: Name the type of output, right now just takes 'bed' as an option.", required = False)
 
 #Setting inputs as va
 args = p.parse_args()
@@ -21,7 +22,8 @@ samp = args.samples
 spec = args.specifier
 tissue = args.tissue
 family = args.family
-print samp, spec, tissue, family
+outtype =args.outtype
+#print samp, spec, tissue, family
 
 # csv iterator block adapted from stack overlow forum, http://stackoverflow.com/questions/6740918/creating-a-dictionary-from-a-csv-file, visited 7-14-16
 
@@ -52,7 +54,7 @@ if family != None:
 
 
 samlist = get_samplst(get_all_vcfsamples(vcfarg), samp, spec) #Use functions from get_samplelist.py to start create the samplelist to be passed to cyvcf2
-print samlist
+#print samlist
 
 finalsamplelist = []
 
@@ -62,7 +64,7 @@ if family or tissue != None:
             finalsamplelist.append(i)
         else: continue
 else: finalsamplelist = samlist
-print finalsamplelist
+#print finalsamplelist
 
 if len(finalsamplelist) == 0:
     print "ERROR: Looks like you are giving conflicting specifications. Please check the options given and/or that the sample you are looking for is in the vcf file you are using."
@@ -71,11 +73,16 @@ else:
 
 vcfinfo = []
 
-print finalsamplelist
+#print finalsamplelist
 
-for v in bigvcf:
-     print "chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int)
-
+#If statements to allow for different output files
+if outtype == None:
+    for v in bigvcf:
+        print "chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int)
+elif outtype == 'bed':
+    for v in bigvcf:
+        print "chr"+v.CHROM, v.start, v.end, v.REF, v.ALT
+else: print "ERROR: incorrect type given. If using this option just use 'bed'."
 
 ##outfile = open((out), "w")
 
