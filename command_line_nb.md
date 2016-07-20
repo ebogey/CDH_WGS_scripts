@@ -22,4 +22,4 @@ I am also running samtools depth to start seeing if there are any anomalies in r
 
 Updated get_sample_info.py ran with similar command line input as before:
 
-$for i in {60..64}; do python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-00258$i -sp 'Exact' -to bed >~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_15-00258$i.bed; done
+$for i in {60..64}; do python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-00258$i -sp 'Exact' -to 'bed' >~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_15-00258$i.bed; done

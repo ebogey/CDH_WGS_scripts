@@ -78,10 +78,10 @@ vcfinfo = []
 #If statements to allow for different output files
 if outtype == None:
     for v in bigvcf:
-        print "chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int)
+        print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int))
 elif outtype == 'bed':
     for v in bigvcf:
-        print "chr"+v.CHROM, v.start, v.end, v.REF, v.ALT
+        print "%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM, v.start, v.end, v.REF, v.ALT)
 else: print "ERROR: incorrect type given. If using this option just use 'bed'."
 
 ##outfile = open((out), "w")
