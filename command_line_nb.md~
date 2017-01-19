@@ -22,4 +22,320 @@ I am also running samtools depth to start seeing if there are any anomalies in r
 
 Updated get_sample_info.py ran with similar command line input as before:
 
-$for i in {60..64}; do python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-00258$i -sp 'Exact' -to bed >~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_15-00258$i.bed; done
+$for i in {60..64}; do python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-00258$i -sp 'Exact' -to 'bed' >~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_15-00258$i.bed; done
+
+7-21-16, 7-22-16
+
+Output per sample worked, but wanted to have tab delimited output to match bedfiles as much as possible. Ran and each sample output was ~1 GB, made sure to include the sample's depth of coverage and sample's genotype quality, will use to filter later.
+
+Tried to next use bedtools2 (downloaded installed 7-22-16 from github) intersect function against exons_hg19_nochrun.bed, but received errors about formating of inputs.
+
+7-25-16
+Looked over exon file, appears to not be a true bed file, redownloaded from UCSC genome browser table function (https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=504298761_AhJEW2AnZ4Yuq8AdZu1Kz0S8Nnf8&clade=mammal&org=&db=hg19&hgta_group=genes&hgta_track=knownGene&hgta_table=knownGene&hgta_regionType=genome&position=&hgta_outputType=primaryTable&hgta_outFileName=repeats_hg19_bedfile.bed), used exons as bed position demarker and named new file hg19_exons.bed.
+
+Intersected new exon bed file with sample variant files:
+
+$for i in {60..84}; do /Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_15-00258$i.bed -b ~/Documents/CDH_WGS/Data/hg19_exons.bed >~/Documents/CDH_WGS/UGPvariants_exonsonly_15-00258$i.bed; done
+
+Looks like it worked (less lines per chromosome from first looks with less and tail). Next intersect against repeats, need to make my own bedfile it seems though.
+
+7-25-16
+Made a 'bed' file out of the repeats file downloaded from the UCSC genome browser. Contains chromosome number, genome position start, genome position end. Use command line:
+
+$awk -v OFS='\t' '{print $6, $7, $8}' repeats_hg19_bedfile.bed >repeats_hg19_madebed.bed
+
+Tried intersecting found I need to both remove the first line (header) and sort the bed file:
+
+$sed '1d' repeats_hg19_madebed.bed > repeats_hg19.bed (remove header)
+
+$/Users/kardonlab/bedtools2/bin/bedtools sort -i ~/Documents/CDH_WGS/Data/repeats_hg19.bed >sorted_repeats_hg19.bed (sort)
+
+Now with new file I used bedtools intersect with the -v option to remove any variants in the UGPvariants_exonsonly_15-00258..bed files that were in a low mappability/repeative region.
+
+$for i in {60..84}; do /Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/UGPvariants_exonsonly_15-00258$i.bed -b ~/Documents/CDH_WGS/Data/sorted_repeats_hg19.bed -v >~/Documents/CDH_WGS/UGPvariants_exonsonly_nounmapregions_15-00258$i.bed; done
+
+Used ls -hl to check file, no real change from exononly files which is as expected since there is not a lot of low mappability in exons.
+
+Started to look over in less, looks like both the exononly and exononly_nonmapped bed files have repeated variants, in which all fields are identical. I think this is an artifact from the bedtools intersect runs I did. Will need to rerun, probably with the -wa option. First I am going to go back to the python tool and add an option to filter variants based on genotype quality for given individual. Add -q option (required) to command line input for get_sample_info.py. Give some number and will only output variants that have a genotype quality equal to or greater than the number given.
+
+Ran altered command line input and recalled variants
+
+$for i in {60..64}; do python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-00258$i -q 90 -sp 'Exact' -to 'bed' >~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_highGQ_15-00258$i.bed; done
+
+Took ~12 hours. Interestingly files sizes are different, with patient connective tissue (15-0025864) having the largest file size, thus has the most high quality variants.
+
+7-27-16
+Now to reintersect against the hg19 exons and repeat bedfiles. Will use the -wa option to see if it helps with the repeat artifact. Intersected again with
+
+$/Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/io/UGPvariants_highGQ_15-0025860.bed -b ~/Documents/CDH_WGS/Data/hg19_exons.bed -wa >~/Documents/CDH_WGS/io/UGPvariants_highGQ_exonsonly_15-0025860.bed
+
+Still had the duplicate variants! Looked at the hg19_exons.bed file and it has duplicate regions with different names for the exons. Decided to get just the chromosome, start position and end position to unique the exons. First I used awk to pull the first three columns:
+
+$awk -v OFS='\t' '{print $1,$2,$3}' ~/Documents/CDH_WGS/Data/hg19_exons.bed >hg19_col3_exons.bed 
+
+Next I sorted the file to group the duplicates:
+
+$/Users/kardonlab/bedtools2/bin/bedtools sort -i hg19_col3_exons.bed >hg19_col3_sorted_exons.bed
+
+Finally I used uniq to pull out the unique exons:
+
+$uniq hg19_col3_sorted_exons.bed >hg19_col3_sorted_unique_exons.bed
+
+Worked, but still have duplicate start positions with different end positions (psssh, isoforms with differential exon expression is a thing). Will still have duplicate variants when I intersect this file to my sample variant files.
+
+Ran bedtools intersect against 15-0025860.bed to test pipeline.
+
+$/Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/io/UGPvariants_highGQ_15-0025860.bed -b ~/Documents/CDH_WGS/io/hg19_col3_sorted_unique_exons.bed -wa >~/Documents/CDH_WGS/io/UGPvariants_highGQ_exonsonly_15-0025860.bed
+
+Yep, still has duplicates, but is about half the file size to the output when I ran this with the non-uniqued exon file (32 MB to 15 MB) this is about 15% of the high GQ variants for the sample (makes sense for exon only variants). For the pipeline, will also run the bedtools intersect -v samplevariant.bed to hg19_repeats.bed, then uniq the output.
+
+$for i in {60..64};do /Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/io/UGPvariants_highGQ_15-00258$i.bed -b ~/Documents/CDH_WGS/io/hg19_col3_sorted_unique_exons.bed -wa | /Users/kardonlab/bedtools2/bin/bedtools intersect -a stdin -b ~/Documents/CDH_WGS/Data/sorted_repeats_hg19.bed -v | uniq >UGPvariants_highGQ_exonsonly_uniq_15-00258$i.bed; done
+
+All files ~12 MB, but connective tissue sample still higher.
+
+Next I will use bedtools intersect -v to start finding how many tissue unique variants there are.
+
+Created bash file bedtoolsintersect_comparetissues.bash that contains three for loops that goes through and runs bedtools intersect -v with one of the three patient tissues as -a and one of the 5 fanily samples as -b. From file sizes it looks like the connective tissue samples with -a are larger, thus seems to have more specific variants. 
+
+Added to the bash script to have the command to pull variants, filter and unique the sample variants before passing to the intersecting commands. All use for loops. Ran on only the second family (65-69) to test.
+
+7-29-16
+Due to a few typos in the bash file (bedtoolsintersect_comparetissues.bash) only the command to pull sample specific variants from the complete vcf ran completely. Found what the errors were (note: in bash nested for loops need to be " for i in {1..9}; do for j in {10..19};") and my naming of an intermediate file was incorrect. Commented out the line that pulls out variants and creates the "bed" files with the high (>90) GQ variants for given samples and reran to check that the comparison lines worked. Now have outputs of this comparison pipeline for the first two families, samples ..60 to ..69.
+
+Now that I have variants of interest I need to find out what genes these variants are located in. Downloaded refseq gene bed file from the UCSC genome browser with the chrom, txStart, txEnd and name2 options selected for the output file. url: http://genome.ucsc.edu/cgi-bin/hgTables. File named hg19_genes_commonnames.bed, sample of file below
+
+Kardons-MacBook-Pro:CDH_WGS_scripts kardonlab$ head ~/Documents/CDH_WGS/Data/hg19_genes_commonnames.bed 
+#chrom				    txStart    txEnd							name2
+chr1				    66999251   67216822							SGIP1
+chr1				    66999638   67216822							SGIP1
+chr1				    8378144    8404227							SLC45A1
+chr1				    16767166   16786584							NECAP2
+chr1				    16767166   16786584							NECAP2
+chr1				    16767166   16786584							NECAP2
+chr1				    25071759   25170815							CLIC4
+chr1				    33546713   33586132							AZIN2
+chr1				    33546713   33586132							AZIN2
+
+
+Next I will intersect against this to create files of what genes we are finding connective tissue associated variants. If it is not too much I will try to add the gene names to the variant files so both the variant (and info) and gene name are in the same file. 
+
+Best thing to do is to add the gene names to the 'bed' file I create after pulling variants out of the complete vcf, going to create a bash file to do this for samples ..60 through ..69 using another for loop set up. I can then add this to the other bash script and run that through all the samples.
+
+Will also add in a mkdir step and just put all files generated into specific directories within CDH_WGS/Data/io/. 
+
+Created bash script gene_nameadd.bash to first make the new directory, then get all the genes that have a variant appear. From this file of genes I then pull the last column (genes names) and add it back to the exonsonly, unique variant file. However, again because of multiple isoforms there are many entries per gene on in the bed file downloaded from the UCSC genome browser, thus when I intersect against it I get many duplicate gene names, and when added to the original variant file the final column is almost double the length of the other columns. 
+
+Next idea (if this doesn't work/takes too long I will bag it and go back to cyvcf) intersect like before, but with no option (i.e. -wa). This will print the snp from the sample variant file and the gene name that was found to intersect. Thus the sample variant snp will come up multiple times because it will be found in many isoforms of the gene. However, in the output file they will look identical, and I can then use unique to hopefully remove the duplicates.
+
+Tried to include the uniq pipe, still did not solve it. I will just use this as a last step after the comparison files are created to see what genes may be interesting to look in to further. Next I will start looking into whether I can use the bed files I create from this pipeline to pass in to cyvcf to create full vcfs with the variants of interest.
+
+
+8-1-16
+The run I started with the bedtoolsintersect_comparetissues.bash finished, full pipeline outputs for 60-69 created, bed file with high quality variants from the vcf, uniqued bed file, filtered variants using the hg19 exons and repeats and finally all comparisons between the files. The last outputs are within ~/Documents/CDH_WGS/io/family_comparisons/
+
+Outputs from bedtoolsintersect_comparetissues.bash:
+>~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/UGPvariants_highGQ_15-00258$i.bed
+
+>~/Documents/CDH_WGS/io/UGPvariants_highGQ_exonsonly_uniq_15-00258$i.bed
+
+>~/Documents/CDH_WGS/io/family_comparisons/UGPvariants_highGQ_exonsonly_uniq_15-00258$j.uniq2_$i.bed
+
+>~/Documents/CDH_WGS/io/family_comparisons/genes_UGPvariants_highGQ_exonsonly_uniq_15-00258$j.uniq2_$i.bed
+
+Next running the same bash script iterating from sample ..75 to ..84. Skipping the third family (70 to 74) as the connective tissue sample (15-0025874) has some unresolved issues.
+
+
+8-3-16
+Have output files for all samples except samples ..70 to ..74. Next modified the bash script gene_nameadd.bash to determine the genes the variants were found in. Also created gene_compare.bash to pull the gene names now added to the comparison bed files and then compared to genes in CDH_gene.txt to see any CDH associated genes had high quality variants. Did not find anything.
+
+Next will create a new python tool or add to get_sample_info.py to again pull out variants from samples given, then create a new vcf file. This will be easier to use with other programs.
+
+
+8-4-16
+Added vcf option for outtype, also works in quality and depth cutoffs. Basically just need to print str(v) coming from for v in bigvcf. Before the for loop also print out raw vcf header to make a true vcf file. Tested with 15-0025860 sample:
+
+$python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15-0025860 -q 90 -d 5 -sp 'Exact' -to 'vcf' >~/Documents/CDH_WGS/Data/VCFs/Parsed/15-0025860_UGPvariants_highQ_depth5.vcf
+
+output file looks good. File size was about 3 GB. Next did full 411 family of samples and 809 family.
+
+Ran using the following command lines:
+
+$python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -f 411 -q 90 -d 5 -sp 'Starts with' -to 'vcf' >~/Documents/CDH_WGS/Data/VCFs/Parsed/family411_UGPvariants_highQ_depth5.vcf
+
+$python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -f 809 -q 90 -d 5 -sp 'Starts with' -to 'vcf' >~/Documents/CDH_WGS/Data/VCFs/Parsed/family809_UGPvariants_highQ_depth5.vcf
+
+Family 411 vcf came out with a 3 GB file size, family 809 vcf came out a little smaller 2 GB. Interestingly this full family vcf is smaller than just one small vcf (15-0025860), family 809 run was left over night. Thus far it doesn't look it was stopped prematurely, but will look into it. 
+
+
+8-5-16
+Ran the same command line as yesterday with family 716.
+
+$python get_sample_info.py -v ~/Documents/CDH_WGS/Data/VCFs/GATK_UGP/FQF_Pipeline.GVCF.1.0.0_Final_Backgrounds_Longevity.vcf.gz -s 15 -f 716 -q 90 -d 5 -sp 'Starts with' -to 'vcf' >~/Documents/CDH_WGS/Data/VCFs/Parsed/family716_UGPvariants_highQ_depth5.vcf
+
+Looks good, about 5 GB file size.
+
+8-15-16
+Want to run GEMINI with family vcf files, need to create annotated vcf files for GEMINI input. Found tutorial slides for GEMINI at https://speakerdeck.com/arq5x/an-introduction-and-tutorial-for-variant-exploration-with-gemini (originally visited on 8-6-15), which suggests either Variant Effect Predictor (VEP) or SnpEff to annotate vcfs. Tried to use VEP from Ensembl, ran in to many issues installing the perl script. Many CPAN modules were needed that gave me issues to install. Decided to then try SnpEff, found a good walk through for annotating and adding the annotations to the original VCF (http://gatkforums.broadinstitute.org/firecloud/discussion/50/adding-genomic-annotations-using-snpeff-and-variantannotator, visited 8-15-16).
+
+Downloaded the source files for SNPEff from the sourceforge site (http://snpeff.sourceforge.net/index.html, 8-15-16). Had to also download the newest version of JDK (java for command line) to run (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html, 8-15-16, MAC OS X option). Once downloaded the correct database using the command:
+
+$java -jar snpEff.jar download hg19
+
+No error messages, other databases tried (GRCh37.64, GRCh37.75) did have error messages. Then ran snpeff.
+
+$java -Xmx4G -jar snpEff.jar -v hg19 ~/Documents/CDH_WGS/Data/VCFs/Parsed/family411_UGPvariants_highQ_depth5.vcf >~/Documents/CDH_WGS/Data/VCFs/Parsed/family411_UGPvariants_highQ_depth5.annotatedsnpeff.vcf
+
+Looked good from using less, ran on other family vcf files.
+
+$java -Xmx4G -jar snpEff.jar -v hg19 ~/Documents/CDH_WGS/Data/VCFs/Parsed/family716_UGPvariants_highQ_depth5.vcf >~/Documents/CDH_WGS/Data/VCFs/Parsed/family716_UGPvariants_highQ_depth5.annotatedsnpeff.vcf
+
+$java -Xmx4G -jar snpEff.jar -v hg19 ~/Documents/CDH_WGS/Data/VCFs/Parsed/family809_UGPvariants_highQ_depth5.vcf >~/Documents/CDH_WGS/Data/VCFs/Parsed/family809_UGPvariants_highQ_depth5.annotatedsnpeff.vcf
+
+
+8-17-16
+Decided to put a pin in GEMINI for now, moved on to VAAST to work with Omicia Opal data. Started running VAAST on Omicia Opal for our project, primarily solo, trios and quads using VAAST 3 in the lauch app Opal drop down.
+
+
+8-18-16
+Found you can only run trios of mom, dad and child on Opal, so can do patient tissue trios. Need to run command line VAAST to do patient tissue trios, luckily CHPC has a VAAST module, so added with:
+
+$module add vaast
+
+Followed pipeline from Julie to run, first need to create gvf files from the complete vcf on gnomex within my new lustre scratch directory:
+/scratch/lustre/general/u0695383/
+
+$vaast_converter --build hg19 /scratch/ucgd/lustre/work/u0695383/gnomex/FQF_Pipeline.GVCF.1.0.0_Final+HG_NA_Backgrounds.vcf > vaast_converter.log
+
+This took about two days, as .gvfs were created for each individual (including controls).
+
+8-22-16
+Next had to annotate gvf files with VAT, need to download correct .gff3 to annotate and fasta reference
+
+RefSeq_GRCh37.p10_VAAST.gff3.gz, downloaded from http://www.yandell-lab.org/software/VAAST/data/VAAST2/hg19/Features/ on 8-22-16
+
+vaast_hsap_chrs_hg19.fa.gz, downloaded from  http://www.yandell-lab.org/software/VAAST/data/VAAST2/hg19/Fasta/ on 8-22-16
+
+Used Globus to transfer to my home directory on the CHPC cluster. Both unzipped with gzip -d
+
+8-23-16
+Started to run VAT to annotate gvf files, using the walk through from Julie. Decided for now only to run the gvfs from the patient tissues, first tested with 15-0025863 (proband411 skin).
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025863.gvf >15-0025863.vat.gvf
+
+Looked like it ran fine, some warnings popped up about issues with codons, but the run did not stop. Decided to do single runs for the remaining other patient samples for proband411, 15-0025862 (blood) and 15-0025864 (diaphragm sac). Same command line input, just changed sample id. 
+
+Next will run on all three patient tissues of next family (716).
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025867.gvf > 15-0025867.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025868.gvf > 15-0025868.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025869.gvf > 15-0025869.vat.gvf
+
+The last sample seemed to end early, need to look at file. It is smaller than the other two files in the run.
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025867.gvf > 15-0025867.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025868.gvf > 15-0025868.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025869.gvf > 15-0025869.vat.gvf
+
+Ran fine, but again the last file looks a little small.
+
+
+8-24-16
+Ran VAT with the same command:
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025877.gvf > 15-0025877.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025878.gvf > 15-0025878.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025879.gvf > 15-0025879.vat.gvf
+
+and finally family 809
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025883.gvf > 15-0025883.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025883.gvf > 15-0025883.vat.gvf ; VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025884.gvf > 15-0025884.vat.gvf
+
+Looks like these files aren't missing any chromosomes, but now I think it would best to go over each file. First I am going to try to run one of the files with missing chromosomes on it's own, see if it was due to a time out error on the server.
+
+
+8-25-16
+After staring at the exception message that is the last thing printed to the terminal before the program terminates it looks like it is an issue in the vaast code where a variable is not declared and thus is possibly causing a fatal error (though no error message is throw). Copied the final lines from the terminal printout to a txt file, same with the interval of the original .gvf where I think the issue is arising. Will look into further and probably start taking to people who are better at this than me.
+
+
+8-26-16
+After looking at the vaast code referenced in the warning seen before the VAT run terminates came to the theory that for some reason the codon asigned to the variant it keeps choking on is incorrect, as the waning states that the substr is out of range of the string $vCodons. Went back to the gff3 file downloaded from the vaast site and went to the closest codon to the issue variant. Judging from the fact that the variant was not in any of the intervals listed in the gff3 file I think the issue is that the variant is outside any annotated region, thus no codon was assigned and that is where the issue arose.
+Used sed to remove the variant:
+
+$sed '/154679868/d' 15-0025879.gvf > 15-0025879.lessissue.gvf
+
+and reran VAT:
+
+$VAT -f ~/RefSeq_GRCh37.p10_VAAST.gff3 -a ~/vaast_hsap_chrs_hg19.fa 15-0025879.lessissue.gvf > 15-0025879.vat.gvf
+
+Still hit the same warning in the same chr7 chunk (1500000-20000000), but after looking at the .vat.gvf it looks like it ran longer and stopped at a different variant this time. I feel like this is something VAAST would be aware of and may have crept in from me running things off of Julie's walk through. May be worth comparing .vat.gvf files 
+
+
+9-8-16
+Getting back to mouse PPF RNA-seq data. Goal: Use differential expression and transcript pathway analysis to determine what is being mis-regulated when Gata4 is inactivated in the PPF fibroblasts of the mice. Have the fastq files from the sequencing Zac had done through the core in Feb. 2016. 
+
+Have alignments carried out by Kallisto and abundance counts, however this based on transcripts and known isoforms. This is not taking into account precisely how the RNA sequencing reads are aligning. Thus, with advice from Yufeng Shen from Columbia U, we decided to turn to STAR, which will align the reads completely using the correct reference genome and gtf file identifying where the exons are. 
+
+All of the tutorials and manuals on STAR suggest that at least 30 gigs of RAM are needed, thus I want to run this on the department comgen1 server.
+
+Decided to have the current rotation student Spencer help with the RNA-seq
+
+9-9-16
+VAAST triad trio analysis:
+Met with Barry, turns out the VAAST issue is one he knew about, and was addressed in a more recent build (it was an issue with not assigning codons to variants on the ends). Downloaded the VAAST through subversion, installed using cpan, including a bunch of dependencies. Reran VAT for all samples, all appear to have ran to completion and the file sizes are consistent.
+
+RNA-Seq:
+Wanted to rerun STAR alignment, since it has been awhile since I have done anything with the data. Ran in to a few issues with syntax in Wenji's bash script, but got it to align all the samples, convert with samtools, sort and index. More issues arose once the featureCount.sh bash script was called.
+
+9-12-16
+RNA-Seq:
+Issues paths called had to be fixed for it to run correctly. However, featureCounts (the tool) was not downloaded.
+
+9-16-16
+RNA-Seq:
+Downloaded subread package (including featurecounts) from https://sourceforge.net/projects/subread/files/, uploaded to the human genetics server (comgen1) using filezilla and installed as specified in the documentation.
+Reran full STAR alignment pipeline.
+
+9-18-16
+RNA-Seq:
+The featureCounts.sh script from Wenji Ma included the option which bins exon reads by gene name, thus summing each exon read count in to one number for the whole gene. Fix to report each exon (uses the ENSEMBL exon name) and reran the entire pipeline again. I did save the previous output (with the binned exons per gene) and handed off to Spencer to start using in the DESeq analysis, since we will want gene names for that.
+LUMPY:
+Spoke with Ryan Layer from the Quinlan lab about how to start using LUMPY, said to use a specific version, v0.1.0. However, ended up downloading the incorrect version.
+
+9-19-16
+RNA-Seq:
+Finally was able to pull out exons from the alignments, looked up Gata4 exon ids and wrote two bash scripts to extract them from each genotype file, exon_counter.sh and genotype_iterator.sh. Still am not seeing a striking difference in Gata4 between the cre and cre less PPF RNA samples. Will also extra exons from genes used to normalize, this may help find any differences.
+
+9-21-16
+LUMPY:
+Redownloaded Master branch of LUMPY, the v0.1.0 branch seems to be removed from the Github page.
+
+$git clone --recursive https://github.com/arq5x/lumpy-sv.git
+$cd lumpy-sv/
+$make
+
+Added samtools and samblaster to the lumpyexpress.config file in emacs
+
+$emacs ~/lumpy-sv/bin/lumpyexpress.config
+
+LUMPY_HOME=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv/
+
+LUMPY=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv//bin/lumpy
+SAMBLASTER=/uufs/chpc.utah.edu/common/home/u0695383/samblaster/samblaster
+SAMBAMBA=
+SAMTOOLS=/uufs/chpc.utah.edu/sys/pkg/samtools/0.1.18/samtools
+PYTHON=/usr/bin/python
+
+PAIREND_DISTRO=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv//scripts/pairend_distro.py
+BAMGROUPREADS=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv//scripts/bamkit/bamgroupreads.py
+BAMFILTERRG=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv//scripts/bamkit/bamfilterrg.py
+BAMLIBS=/uufs/chpc.utah.edu/common/home/u0695383/lumpy-sv//scripts/bamkit/bamlibs.py
+
+
+On the README for LUMPY it does not mention sambamba for running, so I will try without sambamba for now.
+
+9-21-16
+LUMPY:
+Tried, but had issues using python on the cluster and could not install the package pysam, needed for lumpy. Tried to make a python virtual environment using instructions on the chpc website, but hit an error of "badly placed ()'s" when I sourced the activate file 
+
+$module load python/3.3.6
+
+$pyvenv --system-state-packages ~/VENV3.3.6
+
+$module unload python/3.3.6
+$source ~/VENV3.3.6/bin/activate
+
+Turns out I needed to be using a bash shell (was using a tcsh shell on the cluster). Switched on my profile page at chpc.utah.edu site, restarted the shell and reran the above lines. Once I was in the venv I added the path to the lumpyexpress.config file, similar to samtools and samblaster and it seems to have worked.

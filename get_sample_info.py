@@ -8,11 +8,13 @@ import json
 p = argparse.ArgumentParser()
 p.add_argument("-v","--vcf", help= "REQUIRED: Specify the path to the vcf file to pull variants from.", required = True)
 p.add_argument("-s","--samples", help= "REQUIRED: Specify which samples you want to pull from vcf.", required = True)
+p.add_argument("-q","--qualfilter", help= "REQUIRED: Specify the minimum genotype quality for samples to filter variants. '-q 90' Only save variants with quality higher than 90.", required = True)
+p.add_argument("-d","--depthqual", help= "REQUIRED: Specify the minimum genotype depth for samples to filter variants. '-d 5' will output variants that have a depth of coverage above 5 for the specified sample(s).", required = True)
 p.add_argument("-sp","--specifier", help= "REQUIRED: Use 'Exact', 'Starts with', 'Ends with' or 'not' to tell how to use the input for --samples.", required = True)
 p.add_argument("-t","--tissue", help= "OPTIONAL: Enter tissue type, pull variants found in these samples. Options: blood-maternal, blood-paternal, blood-proband, Skin, Diaphragm.", required = False)
 p.add_argument("-f","--family", help= "OPTIONAL: Enter a 3 digit family ID, pull variants found in these samples.", required = False)
 p.add_argument("-o","--out", help = "OPTIONAL: Name the output VCF.", required = False)
-p.add_argument("-to","--outtype", help = "OPTIONAL: Name the type of output, right now just takes 'bed' as an option.", required = False)
+p.add_argument("-to","--outtype", help = "OPTIONAL: Name the type of output, right now just takes 'bed' or 'vcf' as options.", required = False)
 
 #Setting inputs as va
 args = p.parse_args()
@@ -22,7 +24,10 @@ samp = args.samples
 spec = args.specifier
 tissue = args.tissue
 family = args.family
-outtype =args.outtype
+outtype = args.outtype
+qualfil = args.qualfilter
+depfil = args.depthqual
+
 #print samp, spec, tissue, family
 
 # csv iterator block adapted from stack overlow forum, http://stackoverflow.com/questions/6740918/creating-a-dictionary-from-a-csv-file, visited 7-14-16
@@ -78,11 +83,26 @@ vcfinfo = []
 #If statements to allow for different output files
 if outtype == None:
     for v in bigvcf:
-        print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM, v.start, v.end, v.ID, v.REF, v.ALT, v.FILTER, v.QUAL, v.format('DP',int))
+        GQ = str(v.format('GQ', int))
+        GQ = GQ.replace("[[","").replace("]]","")
+        if GQ >= qualfil:
+            print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM,v.start,v.end,v.ID,v.REF,v.ALT,v.FILTER, v.QUAL, v.format('DP',int), v.format('GQ',int))
+        else: continue
 elif outtype == 'bed':
     for v in bigvcf:
-        print "%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM, v.start, v.end, v.REF, v.ALT)
-else: print "ERROR: incorrect type given. If using this option just use 'bed'."
+        GQ = str(v.format('GQ', int))
+        GQ = GQ.replace("[[","").replace("]]","")
+        if GQ >= qualfil:
+            print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % ("chr"+v.CHROM,v.start,v.end,v.REF,v.ALT,v.QUAL,v.format('DP',int),v.format('GQ',int))
+        else: continue
+elif outtype == 'vcf':
+    print bigvcf.raw_header
+    for v in bigvcf:
+        vd = str(v.format('DP',int))
+        vd = vd.replace("[[","").replace("]]","")
+        if vd >= depfil:
+            print str(v)
+else: print "ERROR: incorrect type given. If using this option use either 'bed' or 'vcf'."
 
 ##outfile = open((out), "w")
 

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Bash script to first use bedtools intersect to find all the genes (with gene names) that our exon only, high GQ (>90) vaiants reside in.
+
+mkdir ~/Documents/CDH_WGS/io/beds_wgenes/ # Make the directory in which all the intermediate files will go
+
+for i in {75..84}; do for j in {75..84}; do /Users/kardonlab/bedtools2/bin/bedtools intersect -a ~/Documents/CDH_WGS/Data/hg19_genes_commonnames_uniq.bed -b ~/Documents/CDH_WGS/io/family_comparisons/UGPvariants_highGQ_exonsonly_uniq_15-00258$i.uniq2_$j.bed | uniq >~/Documents/CDH_WGS/io/family_comparisons/genes_UGPvariants_highGQ_exonsonly_uniq_15-00258$i.uniq2_$j.bed; done; done # Create a file for each given sample that has just the genes that a variant was found
+
+#for i in {60..69}; do awk '{print $4}' ~/Documents/CDH_WGS/io/beds_wgenes/geneswithvariants_15-00258$i.bed >~/Documents/CDH_WGS/io/beds_wgenes/genesonly_15-00258$i.txt; done #This will grab the column with just the gene names and place it in a new file
+
+#for i in {60..69}; do paste ~/Documents/CDH_WGS/io/UGPvariants_highGQ_exonsonly_uniq_15-00258$i.bed ~/Documents/CDH_WGS/io/beds_wgenes/genesonly_15-00258$i.txt >~/Documents/CDH_WGS/io/UGPvariants_highGQ_exonsonly_uniq_wgenenames_15-00258$i.bed; done 
